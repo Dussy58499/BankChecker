@@ -1,0 +1,33 @@
+﻿@model List<Repository.Models.Domain.FullExchangeRate>
+
+<h1>Exchange Rates</h1>
+
+@foreach (var bankGroup in Model.GroupBy(rate => rate.BankName))
+{
+    <h2>@bankGroup.Key</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Currency Name</th>
+                <th>Currency Base</th>
+                <th>Buy Rate</th>
+                <th>Sell Rate</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rate in bankGroup)
+            {
+                <tr>
+                    <td>@rate.CurrencyName</td>
+                    <td>@rate.CurrencyUahName</td>
+                    <td>@rate.BuyRate</td>
+                    <td>@rate.SellRate</td>
+                    <td>
+                        <a asp-action="ExchangeDetails" asp-route-currencyCode="@rate.CurrencyCode" asp-route-bankName="@rate.BankName">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,40 @@
+﻿@model Repository.Models.Domain.FullExchangeRate
+
+<h2>Currency Details</h2>
+
+<table>
+    <tr>
+        <th>Currency Code</th>
+        <td>@Model.CurrencyCode</td>
+    </tr>
+    <tr>
+        <th>Currency Name</th>
+        <td>@Model.CurrencyName</td>
+    </tr>
+    <tr>
+        <th>Currency UAH Code</th>
+        <td>@Model.CurrencyUahCode</td>
+    </tr>
+    <tr>
+        <th>Currency UAH Name</th>
+        <td>@Model.CurrencyUahName</td>
+    </tr>
+    <tr>
+        <th>Buy Rate</th>
+        <td>@Model.BuyRate</td>
+    </tr>
+    <tr>
+        <th>Sell Rate</th>
+        <td>@Model.SellRate</td>
+    </tr>
+    <tr>
+        <th>Date</th>
+        <td>@Model.Date?.ToShortDateString()</td>
+    </tr>
+    <tr>
+        <th>Bank Name</th>
+        <td>@Model.BankName</td>
+    </tr>
+</table>
+
+<a asp-action="Index">Back to List</a>

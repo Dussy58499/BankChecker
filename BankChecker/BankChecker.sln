@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35122.118
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankChecker", "BankChecker.csproj", "{E7A866EA-E847-4F92-92F6-86A5EE3AD46C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service", "..\Service\Service.csproj", "{87B5C9FD-470E-4B67-A7F2-7EC19FD6B532}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Repository", "..\Repository\Repository.csproj", "{9F4545BD-C50E-4E5B-87B7-14CDDA258BAB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E7A866EA-E847-4F92-92F6-86A5EE3AD46C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7A866EA-E847-4F92-92F6-86A5EE3AD46C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7A866EA-E847-4F92-92F6-86A5EE3AD46C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7A866EA-E847-4F92-92F6-86A5EE3AD46C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87B5C9FD-470E-4B67-A7F2-7EC19FD6B532}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87B5C9FD-470E-4B67-A7F2-7EC19FD6B532}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87B5C9FD-470E-4B67-A7F2-7EC19FD6B532}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87B5C9FD-470E-4B67-A7F2-7EC19FD6B532}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F4545BD-C50E-4E5B-87B7-14CDDA258BAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F4545BD-C50E-4E5B-87B7-14CDDA258BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F4545BD-C50E-4E5B-87B7-14CDDA258BAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F4545BD-C50E-4E5B-87B7-14CDDA258BAB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {38BA71BE-A1CF-45FA-8FD7-01669B435B85}
+	EndGlobalSection
+EndGlobal
