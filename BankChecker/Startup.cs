@@ -1,3 +1,4 @@
+using BankChecker.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -8,10 +9,6 @@ using Microsoft.Extensions.Hosting;
 using Service.Helpers;
 using Service.Interfaces;
 using Service.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BankChecker
 {
@@ -50,6 +47,7 @@ namespace BankChecker
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.UseMiddleware<LoggingMiddleware>();
             app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthentication();

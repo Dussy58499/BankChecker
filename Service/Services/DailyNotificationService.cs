@@ -27,6 +27,7 @@ namespace Service.Services
         {
             _logger.LogInformation("Daily Notification Service is starting.");
             _timer = new Timer(SendDailyNotifications, null, TimeSpan.Zero, TimeSpan.FromDays(1));
+
             return Task.CompletedTask;
         }
 
@@ -64,6 +65,7 @@ namespace Service.Services
         {
             _logger.LogInformation("Daily Notification Service is stopping.");
             _timer?.Change(Timeout.Infinite, 0);
+
             return Task.CompletedTask;
         }
 

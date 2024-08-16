@@ -8,7 +8,6 @@ using Service.Helpers;
 using Repository.Models.Domain;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Service.Services
 {
     public class ExchangeRateService : IExchangeRateService
@@ -86,7 +85,6 @@ namespace Service.Services
                     allRates.AddRange(existingRates);
                 }
             }
-
             return allRates;
         }
     }

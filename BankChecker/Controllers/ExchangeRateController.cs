@@ -35,6 +35,5 @@ namespace BankChecker.Controllers
             }
             return NotFound();
         }
-
     }
 }
