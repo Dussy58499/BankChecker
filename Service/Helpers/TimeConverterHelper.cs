@@ -8,6 +8,11 @@ namespace Service.Helpers
     {
         public static DateTime GetDatetimeFromUnixTime(long unixTime)
         {
+            if(unixTime < DateTimeOffset.MinValue.ToUnixTimeSeconds() || unixTime> DateTimeOffset.MaxValue.ToUnixTimeSeconds())
+            {
+                throw new ArgumentOutOfRangeException(nameof(unixTime), "Unix time is out of range.");
+            }
+
             DateTimeOffset dateTimeOffset = DateTimeOffset.FromUnixTimeSeconds(unixTime);
             return dateTimeOffset.DateTime;
         }

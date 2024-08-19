@@ -21,7 +21,7 @@ namespace Service.Services
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        private async Task<List<FullExchangeRate>> ExchangeRateParser(string url, string bankName)
+        public async Task<List<FullExchangeRate>> ExchangeRateParser(string url, string bankName)
         {
             if (string.IsNullOrEmpty(url))
             {

@@ -26,7 +26,19 @@ namespace Service.Services
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Daily Notification Service is starting.");
-            _timer = new Timer(SendDailyNotifications, null, TimeSpan.Zero, TimeSpan.FromDays(1));
+
+            var now = DateTime.UtcNow;
+            var firstRun = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0, DateTimeKind.Utc);
+
+            if (now > firstRun)
+            {
+                firstRun = firstRun.AddDays(1);
+            }
+
+            var initialDelay = firstRun - now;
+            var period = TimeSpan.FromDays(1);
+
+            _timer = new Timer(SendDailyNotifications, null, initialDelay, period);
 
             return Task.CompletedTask;
         }
@@ -45,14 +57,14 @@ namespace Service.Services
                 {
                     var email = await userManager.GetEmailAsync(user);
                     var exchangeRates = GetDailyExchangeRates(dbContext);
-                    var message = $"Today's exchange rates:\n{exchangeRates}";
+                    var message = $"Today's exchange rates:\n{exchangeRates}\n";
 
                     await emailSender.SendEmailAsync(email, "Daily Exchange Rates", message);
                 }
             }
         }
 
-        private string GetDailyExchangeRates(AppDbContext context)
+        public string GetDailyExchangeRates(AppDbContext context)
         {
             var rates = context.FullExchangeRates
                 .Select(rate => $"{rate.BankName} -> {rate.CurrencyUahName} - {rate.CurrencyName}: {rate.BuyRate}/{rate.SellRate} ")

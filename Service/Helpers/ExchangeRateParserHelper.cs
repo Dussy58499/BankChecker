@@ -69,14 +69,10 @@ namespace Service.Helpers
                         throw new ArgumentException("Unsupported bank", nameof(bankName));
                 }
             }
-            catch (JsonSerializationException ex)
+            catch (JsonReaderException ex)
             {
                 Console.WriteLine($"Error desearializing json for {bankName}: {ex.Message}");
                 throw;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error parsing exchange rates for {bankName}:{ex.Message}");
             }
             return rates;
         }
