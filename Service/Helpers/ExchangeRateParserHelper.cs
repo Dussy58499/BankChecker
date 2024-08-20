@@ -58,7 +58,7 @@ namespace Service.Helpers
                                            CurrencyName = item.Cc,
                                            CurrencyUahCode = "980",
                                            CurrencyUahName = "UAH",
-                                           BuyRate=item.Rate,
+                                           BuyRate = item.Rate,
                                            SellRate = item.Rate,
                                            Date = DateTime.Parse(item.ExchangeDate),
                                            BankName = bankName

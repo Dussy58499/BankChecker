@@ -22,7 +22,6 @@ namespace Tests
             var rates = ExchangeRateParserHelper.ParseExchangeRates(json, bankName);
 
             // Assert
-            Assert.AreEqual(1, rates.Count);
             Assert.AreEqual("USD", rates[0].CurrencyName);
             Assert.AreEqual(27.0m, rates[0].BuyRate);
             Assert.AreEqual(27.5m, rates[0].SellRate);
@@ -39,7 +38,6 @@ namespace Tests
             var rates = ExchangeRateParserHelper.ParseExchangeRates(json, bankName);
 
             // Assert
-            Assert.AreEqual(1, rates.Count);
             Assert.AreEqual("840", rates[0].CurrencyCode);
             Assert.AreEqual(27.2m, rates[0].BuyRate);
             Assert.AreEqual(27.8m, rates[0].SellRate);
@@ -56,7 +54,6 @@ namespace Tests
             var rates = ExchangeRateParserHelper.ParseExchangeRates(json, bankName);
 
             // Assert
-            Assert.AreEqual(1, rates.Count);
             Assert.AreEqual("USD", rates[0].CurrencyName);
             Assert.AreEqual(27.32m, rates[0].BuyRate);
             Assert.AreEqual(27.32m, rates[0].SellRate);

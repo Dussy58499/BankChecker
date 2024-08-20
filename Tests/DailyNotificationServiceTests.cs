@@ -41,6 +41,5 @@ namespace Tests
             var expected = "privatbank -> UAH - USD: 27,5/28,0 \nmonobank -> UAH - USD: 32,0/32,5 ";
             Assert.AreEqual(expected, result);
         }
-
     }
 }
