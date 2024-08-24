@@ -21,10 +21,10 @@ namespace Tests
 
             using (var context = new AppDbContext(options))
             {
-                context.FullExchangeRates.AddRange(new List<FullExchangeRate>
+                context.ExchangeRates.AddRange(new List<ExchangeRate>
                 {
-                     new FullExchangeRate { BankName = "privatbank", CurrencyUahName = "UAH", CurrencyName = "USD", BuyRate = 27.5M, SellRate = 28.0M },
-                     new FullExchangeRate { BankName = "monobank", CurrencyUahName = "UAH", CurrencyName = "USD", BuyRate = 32.0M, SellRate = 32.5M }
+                     new ExchangeRate { BankName = "privatbank", CurrencyUahName = "UAH", CurrencyName = "USD", BuyRate = 27.5M, SellRate = 28.0M },
+                     new ExchangeRate { BankName = "monobank", CurrencyUahName = "UAH", CurrencyName = "USD", BuyRate = 32.0M, SellRate = 32.5M }
                 });
                 context.SaveChanges();
             }

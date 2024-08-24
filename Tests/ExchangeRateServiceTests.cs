@@ -11,6 +11,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Repository.Interfaces;
 
 namespace Tests
 {
@@ -19,7 +20,7 @@ namespace Tests
     {
         private Mock<HttpMessageHandler> _mockHttpMessageHandler;
         private HttpClient _httpClient;
-        private AppDbContext _context;
+        private Mock<IExchangeRateRepository> _mockRepository;
         private ExchangeRateService _service;
 
         [TestInitialize]
@@ -29,12 +30,12 @@ namespace Tests
                 .UseInMemoryDatabase(databaseName: "TestDatabase")
                 .Options;
 
-            _context = new AppDbContext(options);
+            _mockRepository = new Mock<IExchangeRateRepository>();
 
             _mockHttpMessageHandler = new Mock<HttpMessageHandler>(MockBehavior.Strict);
             _httpClient = new HttpClient(_mockHttpMessageHandler.Object);
 
-            _service = new ExchangeRateService(_httpClient, _context);
+            _service = new ExchangeRateService(_httpClient, _mockRepository.Object);
         }
 
         [TestMethod]
@@ -48,24 +49,6 @@ namespace Tests
             var privatBankUrl = "https://api.privatbank.ua/p24api/pubinfo?exchange&coursid=5";
             var monoBankUrl = "https://api.monobank.ua/bank/currency";
             var nbuUrl = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
-
-            var privatBankRates = new List<FullExchangeRate>
-            {
-                new FullExchangeRate
-                { Id = Guid.NewGuid(), BankName = "privatbank", CurrencyCode = "USD", BuyRate = 27.50M, SellRate = 27.90M }
-            };
-
-            var monoBankRates = new List<FullExchangeRate>
-            {
-                new FullExchangeRate
-                { Id = Guid.NewGuid(), BankName = "monobank", CurrencyCode = "USD", BuyRate = 27.60M, SellRate = 28.00M }
-            };
-
-            var nbuRates = new List<FullExchangeRate>
-            {
-                new FullExchangeRate
-                { Id = Guid.NewGuid(), BankName = "nbu", CurrencyCode = "USD", BuyRate = 27.50M, SellRate = 27.50M, Date = DateTime.Parse("2024-08-19") }
-            };
 
             _mockHttpMessageHandler
                 .Protected()
@@ -115,18 +98,23 @@ namespace Tests
                 })
                 .Verifiable();
 
-            _context.FullExchangeRates.AddRange(privatBankRates);
-            _context.FullExchangeRates.AddRange(monoBankRates);
-            _context.FullExchangeRates.AddRange(nbuRates);
-            await _context.SaveChangesAsync();
+            // Simulate repository return values
+            _mockRepository.Setup(repo => repo.GetExchangeRateAsync())
+                .ReturnsAsync(new List<ExchangeRate>
+                {
+            new ExchangeRate { Id = Guid.NewGuid(), BankName = "privatbank", CurrencyCode = "USD", BuyRate = 27.50M, SellRate = 27.90M },
+            new ExchangeRate { Id = Guid.NewGuid(), BankName = "monobank", CurrencyCode = "USD", BuyRate = 27.60M, SellRate = 28.00M },
+            new ExchangeRate { Id = Guid.NewGuid(), BankName = "nbu", CurrencyCode = "USD", BuyRate = 27.50M, SellRate = 27.50M, Date = DateTime.Parse("2024-08-19") }
+                });
 
             // Act
             var result = await _service.GetExchangeRatesAsync();
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(privatBankRates.Count + monoBankRates.Count + nbuRates.Count, result.Count);
+            Assert.AreEqual(3, result.Count);
         }
+
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
@@ -149,9 +137,9 @@ namespace Tests
         {
             // Arrange
             var json = "[{\"Ccy\":\"USD\",\"Base_Ccy\":\"UAH\",\"Buy\":27.50,\"Sale\":27.90}]";
-            var expectedRates = new List<FullExchangeRate>
+            var expectedRates = new List<ExchangeRate>
             {
-                new FullExchangeRate { CurrencyCode = "840", CurrencyName = "USD", CurrencyUahCode = "980", CurrencyUahName = "UAH", BuyRate = 27.50M, SellRate = 27.90M, BankName = "privatbank" }
+                new ExchangeRate { CurrencyCode = "840", CurrencyName = "USD", CurrencyUahCode = "980", CurrencyUahName = "UAH", BuyRate = 27.50M, SellRate = 27.90M, BankName = "privatbank" }
             };
 
             _mockHttpMessageHandler
@@ -183,9 +171,9 @@ namespace Tests
         {
             // Arrange
             var json = "[{\"CurrencyCodeA\":\"840\",\"CurrencyCodeB\":\"980\",\"Date\":1626883200,\"RateBuy\":27.60,\"RateSell\":28.00}]";
-            var expectedRates = new List<FullExchangeRate>
+            var expectedRates = new List<ExchangeRate>
             {
-                new FullExchangeRate
+                new ExchangeRate
                 {
                     CurrencyCode = "840",
                     CurrencyName = "USD",
@@ -229,9 +217,9 @@ namespace Tests
         {
             // Arrange
             var json = "[{\"R030\":\"840\",\"Cc\":\"USD\",\"Rate\":27.50,\"ExchangeDate\":\"2024-08-19\"}]";
-            var expectedRates = new List<FullExchangeRate>
+            var expectedRates = new List<ExchangeRate>
             {
-                new FullExchangeRate
+                new ExchangeRate
                 {
                     CurrencyCode = "840",
                     CurrencyName = "USD",

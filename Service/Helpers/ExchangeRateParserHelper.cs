@@ -6,14 +6,15 @@ using System.Text;
 using System.Linq;
 using Service.Mapping;
 using System.Runtime.CompilerServices;
+using Repository.Models.DataTransferObject;
 
 namespace Service.Helpers
 {
     public static class ExchangeRateParserHelper
     {
-        public static List<FullExchangeRate> ParseExchangeRates(string json, string bankName)
+        public static List<ExchangeRate> ParseExchangeRates(string json, string bankName)
         {
-            var rates = new List<FullExchangeRate>();
+            var rates = new List<ExchangeRate>();
             try
             {
                 switch (bankName.ToLower())
@@ -21,7 +22,7 @@ namespace Service.Helpers
                     case "privatbank":
                         var privatData = JsonConvert.DeserializeObject<List<PrivatBank>>(json);
                         rates = privatData.Where(item => item.Ccy == "USD" && item.Base_Ccy == "UAH")
-                                          .Select(item => new FullExchangeRate
+                                          .Select(item => new ExchangeRate
                                           {
                                               CurrencyCode = ExchangeRateMapping.GetCurrencyCode(item.Ccy),
                                               CurrencyName = item.Ccy,
@@ -36,7 +37,7 @@ namespace Service.Helpers
                     case "monobank":
                         var monoData = JsonConvert.DeserializeObject<List<MonoBank>>(json);
                         rates = monoData.Where(item => item.CurrencyCodeA == "840" && item.CurrencyCodeB == "980")
-                                        .Select(item => new FullExchangeRate
+                                        .Select(item => new ExchangeRate
                                         {
                                             CurrencyCode = item.CurrencyCodeA,
                                             CurrencyName = ExchangeRateMapping.GetCurrencyName(item.CurrencyCodeA),
@@ -52,7 +53,7 @@ namespace Service.Helpers
                     case "nbu":
                         var nbuData = JsonConvert.DeserializeObject<List<NbuBank>>(json);
                         rates = nbuData.Where(item => item.R030 == "840")
-                                       .Select(item => new FullExchangeRate
+                                       .Select(item => new ExchangeRate
                                        {
                                            CurrencyCode = item.R030,
                                            CurrencyName = item.Cc,

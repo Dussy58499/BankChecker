@@ -6,6 +6,7 @@ namespace Service.Interfaces
 {
     public interface IExchangeRateService
     {
-        Task<List<FullExchangeRate>> GetExchangeRatesAsync();
+        Task<List<ExchangeRate>> GetExchangeRatesAsync();
+        Task<ExchangeRate> GetRateByBankAndCurrencyAsync(string bankName, string currencyCode);
     }
 }

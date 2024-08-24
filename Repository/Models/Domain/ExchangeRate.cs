@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Repository.Models.Domain
 {
-    public class FullExchangeRate
+    public class ExchangeRate
     {
         public Guid Id { get; set; }
         public string CurrencyCode { get; set; }

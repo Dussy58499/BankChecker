@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Service.Interfaces;
 using System.Linq;
 using System.Threading.Tasks;
+using Repository.Repositories;
 
 namespace BankChecker.Controllers
 {
@@ -15,7 +16,6 @@ namespace BankChecker.Controllers
         {
             _exchangeRateService = exchangeRateService;
             _context = context;
-
         }
 
         [HttpGet("BankList")]
@@ -28,9 +28,7 @@ namespace BankChecker.Controllers
         [HttpGet("ExchangeDetails/{bankName}/{currencyCode}")]
         public async Task<IActionResult> ExchangeDetails(string bankName, string currencyCode)
         {
-            var bank = await _context.FullExchangeRates
-                            .Where(r => r.BankName == bankName && r.CurrencyCode == currencyCode)
-                            .FirstOrDefaultAsync();
+            var bank = await _exchangeRateService.GetRateByBankAndCurrencyAsync(bankName, currencyCode);
 
             if (bank != null)
             {

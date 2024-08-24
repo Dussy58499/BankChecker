@@ -1,4 +1,4 @@
-﻿namespace Repository.Models.Domain
+﻿namespace Repository.Models.DataTransferObject
 {
     public class MonoBank
     {

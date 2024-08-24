@@ -33,7 +33,6 @@ namespace Service.Helpers
                 Body = htmlMessage,
                 IsBodyHtml = true,
             };
-
             mailMessage.To.Add(email);
 
             return smtpClient.SendMailAsync(mailMessage);

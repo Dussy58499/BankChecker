@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using Repository.Data;
+using Repository.Interfaces;
 
 namespace Service.Services
 {
@@ -27,8 +28,8 @@ namespace Service.Services
         {
             _logger.LogInformation("Daily Notification Service is starting.");
 
-            var now = DateTime.UtcNow;
-            var firstRun = new DateTime(now.Year, now.Month, now.Day, 12, 0, 0, DateTimeKind.Utc);
+            var now = DateTime.Now;
+            var firstRun = new DateTime(now.Year, now.Month, now.Day, 10, 26, 0, DateTimeKind.Utc);
 
             if (now > firstRun)
             {
@@ -38,39 +39,32 @@ namespace Service.Services
             var initialDelay = firstRun - now;
             var period = TimeSpan.FromDays(1);
 
-            _timer = new Timer(SendDailyNotifications, null, initialDelay, period);
-
+            _timer = new Timer(async _ => await SendDailyNotifications(), null, initialDelay, period);
             return Task.CompletedTask;
         }
 
-        private async void SendDailyNotifications(object state)
+        private async Task SendDailyNotifications()
         {
             using (var scope = _serviceProvider.CreateScope())
             {
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
-                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var exchangeRateRepository = scope.ServiceProvider.GetRequiredService<IExchangeRateRepository>();
 
                 var users = userManager.Users.Where(u => u.ReceiveDailyNotifications).ToList();
+                var exchangeRates = await exchangeRateRepository.GetExchangeRateAsync();
+
+                var message = "Today's exchange rates:\n" +
+                           string.Join("\n", exchangeRates.Select(rate =>
+                               $"{rate.BankName} -> {rate.CurrencyUahName} - {rate.CurrencyName}: {rate.BuyRate}/{rate.SellRate} ")) +
+                           "\n";
 
                 foreach (var user in users)
                 {
                     var email = await userManager.GetEmailAsync(user);
-                    var exchangeRates = GetDailyExchangeRates(dbContext);
-                    var message = $"Today's exchange rates:\n{exchangeRates}\n";
-
                     await emailSender.SendEmailAsync(email, "Daily Exchange Rates", message);
                 }
             }
-        }
-
-        public string GetDailyExchangeRates(AppDbContext context)
-        {
-            var rates = context.FullExchangeRates
-                .Select(rate => $"{rate.BankName} -> {rate.CurrencyUahName} - {rate.CurrencyName}: {rate.BuyRate}/{rate.SellRate} ")
-                .ToList();
-
-            return string.Join("\n", rates);
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
