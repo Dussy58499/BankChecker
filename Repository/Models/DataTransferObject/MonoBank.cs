@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Repository.Models.Domain
+﻿namespace Repository.Models.DataTransferObject
 {
     public class MonoBank
     {
@@ -11,6 +7,6 @@ namespace Repository.Models.Domain
         public long Date { get; set; }
         public decimal RateBuy { get; set; }
         public decimal RateSell { get; set; }
-        public decimal RateCross {  get; set; }
+        public decimal RateCross { get; set; }
     }
 }

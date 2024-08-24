@@ -8,5 +8,5 @@ public class AppDbContext : DbContext
     {
     }
 
-    public DbSet<FullExchangeRate> FullExchangeRates { get; set; }
+    public DbSet<ExchangeRate> ExchangeRates { get; set; }
 }

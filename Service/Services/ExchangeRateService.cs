@@ -7,22 +7,60 @@ using System.Linq;
 using Service.Helpers;
 using Repository.Models.Domain;
 using Microsoft.EntityFrameworkCore;
-
+using Repository.Interfaces;
 
 namespace Service.Services
 {
     public class ExchangeRateService : IExchangeRateService
     {
         private readonly HttpClient _httpClient;
-        private readonly AppDbContext _context;
+        private readonly IExchangeRateRepository _repository;
 
-        public ExchangeRateService(HttpClient httpClient, AppDbContext context)
+        public ExchangeRateService(HttpClient httpClient, IExchangeRateRepository repository)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        private async Task<List<FullExchangeRate>> ExchangeRateParser(string url, string bankName)
+        public async Task<List<ExchangeRate>> GetExchangeRatesAsync()
+        {
+            var bankApiUrls = new Dictionary<string, string>
+            {
+                { "PrivatBank", "https://api.privatbank.ua/p24api/pubinfo?exchange&coursid=5" },
+                { "Monobank", "https://api.monobank.ua/bank/currency" },
+                { "NBU", "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json" },
+            };
+
+            var allRates = new List<ExchangeRate>();
+
+            foreach (var bank in bankApiUrls)
+            {
+                var existingRates = await _repository.GetByBankAsync(bank.Key);
+
+                if (!existingRates.Any())
+                {
+                    var fetchedRates = await ExchangeRateParser(bank.Value, bank.Key);
+                    allRates.AddRange(fetchedRates);
+
+                    foreach(var rate in fetchedRates)
+                    {
+                        await _repository.AddAsync(rate);
+                    }
+                }
+                else
+                {
+                    allRates.AddRange(existingRates);
+                }
+            }
+            return allRates;
+        }
+
+        public async Task<ExchangeRate> GetRateByBankAndCurrencyAsync(string bankName, string currencyCode)
+        {
+            return await _repository.GetByBankAndCurrencyAsync(bankName, currencyCode);
+        }
+
+        public async Task<List<ExchangeRate>> ExchangeRateParser(string url, string bankName)
         {
             if (string.IsNullOrEmpty(url))
             {
@@ -42,8 +80,9 @@ namespace Service.Services
                 {
                     rates.ForEach(rate => rate.BankName = bankName);
                 }
-                return rates ?? new List<FullExchangeRate>();
+                return rates ?? new List<ExchangeRate>();
             }
+
             catch (HttpRequestException ex)
             {
                 Console.WriteLine($"HTTP request error for {bankName}: {ex.Message}");
@@ -54,40 +93,6 @@ namespace Service.Services
                 Console.WriteLine($"Error fetching exchange rates from {bankName}: {ex.Message}");
                 throw;
             }
-        }
-
-        public async Task<List<FullExchangeRate>> GetExchangeRatesAsync()
-        {
-            var bankApiUrls = new Dictionary<string, string>
-            {
-                { "PrivatBank", "https://api.privatbank.ua/p24api/pubinfo?exchange&coursid=5" },
-                { "Monobank", "https://api.monobank.ua/bank/currency" },
-                { "NBU", "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json" },
-            };
-
-            var allRates = new List<FullExchangeRate>();
-
-            foreach (var bank in bankApiUrls)
-            {
-                var existingRates = await _context.FullExchangeRates
-                    .Where(x => x.BankName == bank.Key)
-                    .ToListAsync();
-
-                if (!existingRates.Any())
-                {
-                    var fetchedRates = await ExchangeRateParser(bank.Value, bank.Key);
-                    allRates.AddRange(fetchedRates);
-
-                    _context.FullExchangeRates.AddRange(fetchedRates);
-                    await _context.SaveChangesAsync();
-                }
-                else
-                {
-                    allRates.AddRange(existingRates);
-                }
-            }
-
-            return allRates;
         }
     }
 }

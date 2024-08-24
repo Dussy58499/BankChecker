@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Mail;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Service.Helpers
@@ -34,7 +33,6 @@ namespace Service.Helpers
                 Body = htmlMessage,
                 IsBodyHtml = true,
             };
-
             mailMessage.To.Add(email);
 
             return smtpClient.SendMailAsync(mailMessage);

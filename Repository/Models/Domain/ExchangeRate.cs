@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace Repository.Models.Domain
 {
-    public class FullExchangeRate
+    public class ExchangeRate
     {
         public Guid Id { get; set; }
         public string CurrencyCode { get; set; }
